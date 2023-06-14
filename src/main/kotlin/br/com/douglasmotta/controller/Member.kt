@@ -1,4 +1,4 @@
-package br.com.douglasmotta.room
+package br.com.douglasmotta.controller
 
 import io.ktor.websocket.*
 

@@ -1,8 +1,9 @@
 package br.com.douglasmotta
 
 import br.com.douglasmotta.di.mainModule
-import io.ktor.server.application.*
 import br.com.douglasmotta.plugins.*
+import br.com.douglasmotta.security.token.TokenConfig
+import io.ktor.server.application.*
 import org.koin.ktor.plugin.Koin
 
 fun main(args: Array<String>): Unit =
@@ -13,9 +14,17 @@ fun Application.module() {
     install(Koin) {
         modules(mainModule)
     }
+
+    val tokenConfig = TokenConfig(
+        issuer = environment.config.property("jwt.issuer").getString(),
+        audience = environment.config.property("jwt.audience").getString(),
+        expiresIn = 365L * 1000L * 60L * 60L * 24L,
+        secret = System.getenv("JWT_SECRET")
+    )
+
     configureSockets()
     configureSerialization()
     configureMonitoring()
-    configureSecurity()
-    configureRouting()
+    configureSecurity(tokenConfig)
+    configureRouting(tokenConfig)
 }

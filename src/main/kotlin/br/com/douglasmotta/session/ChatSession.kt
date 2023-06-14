@@ -1,6 +1,6 @@
 package br.com.douglasmotta.session
 
 data class ChatSession(
-    val username: String,
+    val userId: String,
     val sessionId: String,
 )

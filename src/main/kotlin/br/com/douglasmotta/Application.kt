@@ -1,5 +1,6 @@
 package br.com.douglasmotta
 
+import br.com.douglasmotta.data.db.DbHelper.configureDbVariables
 import br.com.douglasmotta.di.mainModule
 import br.com.douglasmotta.plugins.*
 import br.com.douglasmotta.security.token.TokenConfig
@@ -21,6 +22,8 @@ fun Application.module() {
         expiresIn = 365L * 1000L * 60L * 60L * 24L,
         secret = System.getenv("JWT_SECRET")
     )
+
+    configureDbVariables()
 
     configureSockets()
     configureSerialization()

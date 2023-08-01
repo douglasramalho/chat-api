@@ -1,6 +1,7 @@
 package br.com.douglasmotta.routes
 
-import br.com.douglasmotta.data.UserDataSource
+import br.com.douglasmotta.data.UserLocalDataSource
+import br.com.douglasmotta.data.db.table.UserEntity
 import br.com.douglasmotta.data.model.User
 import br.com.douglasmotta.data.request.AuthUserRequest
 import br.com.douglasmotta.data.request.CreateUserRequest
@@ -20,7 +21,7 @@ import io.ktor.server.routing.*
 
 fun Route.signUp(
     hashingService: HashingService,
-    userDataSource: UserDataSource
+    userLocalDataSource: UserLocalDataSource
 ) {
     post("signup") {
         val request = call.receiveNullable<CreateUserRequest>() ?: kotlin.run {
@@ -35,23 +36,24 @@ fun Route.signUp(
             return@post
         }
 
-        val existentUserWithUsername = userDataSource.getUserByUsername(request.username)
+        val existentUserWithUsername = userLocalDataSource.getUserByUsername(request.username)
         if (existentUserWithUsername != null) {
             call.respond(HttpStatusCode.Conflict, "Username already exists. Please choose a different username.")
             return@post
         }
 
         val saltedHash = hashingService.generateSaltedHash(request.password)
-        val user = User(
-            username = request.username,
-            password = saltedHash.hash,
-            salt = saltedHash.salt,
-            firstName = request.firstName,
-            lastName = request.lastName,
-            profilePictureUrl = request.profilePictureUrl
-        )
 
-        val wasAcknowledged = userDataSource.insertUser(user)
+        val userEntity = UserEntity {
+            username = request.username
+            password = saltedHash.hash
+            salt = saltedHash.salt
+            firstName = request.firstName
+            lastName = request.lastName
+            profilePictureUrl = request.profilePictureUrl
+        }
+
+        val wasAcknowledged = userLocalDataSource.insertUser(userEntity)
         if (!wasAcknowledged) {
             call.respond(HttpStatusCode.Conflict)
             return@post
@@ -63,7 +65,7 @@ fun Route.signUp(
 
 fun Route.signIn(
     hashingService: HashingService,
-    userDataSource: UserDataSource,
+    userLocalDataSource: UserLocalDataSource,
     tokenService: TokenService,
     tokenConfig: TokenConfig,
 ) {
@@ -73,7 +75,7 @@ fun Route.signIn(
             return@post
         }
 
-        val user = userDataSource.getUserByUsername(request.username)
+        val user = userLocalDataSource.getUserByUsername(request.username)
         if (user == null) {
             call.respond(HttpStatusCode.Conflict)
             return@post

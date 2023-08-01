@@ -45,6 +45,13 @@ dependencies {
     implementation("org.litote.kmongo:kmongo:$kmongo_version")
     implementation("org.litote.kmongo:kmongo-coroutine:$kmongo_version")
 
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-slf4j:1.6.0")
+
+    implementation("org.ktorm:ktorm-core:3.5.0")
+    implementation("org.ktorm:ktorm-support-mysql:3.6.0")
+
+    implementation("mysql", "mysql-connector-java","8.0.19")
+
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
 }

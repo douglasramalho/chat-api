@@ -1,12 +1,9 @@
 package br.com.douglasmotta.data.model
 
 import br.com.douglasmotta.data.response.UserResponse
-import org.bson.codecs.pojo.annotations.BsonId
-import org.bson.types.ObjectId
 
 data class User(
-    @BsonId
-    val id: String = ObjectId().toString(),
+    val id: Int = 0,
     val username: String,
     val password: String,
     val salt: String,

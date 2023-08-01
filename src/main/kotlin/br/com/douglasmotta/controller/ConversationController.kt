@@ -2,48 +2,33 @@ package br.com.douglasmotta.controller
 
 import br.com.douglasmotta.data.ConversationLocalDataSource
 import br.com.douglasmotta.data.MessageLocalDataSource
-import br.com.douglasmotta.data.UserDataSource
-import br.com.douglasmotta.data.model.Conversation
-import br.com.douglasmotta.data.model.toResponse
+import br.com.douglasmotta.data.db.table.toResponse
 import br.com.douglasmotta.data.response.ConversationResponse
-import br.com.douglasmotta.session.ChatConnection
-import br.com.douglasmotta.session.ConversationConnection
-import io.ktor.websocket.*
-import java.util.*
 
 class ConversationController(
     private val conversationLocalDataSource: ConversationLocalDataSource,
-    private val userDataSource: UserDataSource,
+    private val messageLocalDataSource: MessageLocalDataSource,
 ) {
 
-    suspend fun createConversation(
-        senderId: String,
-        receiverId: String,
-    ): String? {
+    suspend fun getConversationsBy(userId: Int): List<ConversationResponse> {
+        return conversationLocalDataSource.findConversationsBy(userId).map {
 
-        val sender = userDataSource.getUserBy(senderId)
-        val receiver = userDataSource.getUserBy(receiverId)
+            val firstId = it.firstMember.id
+            val secondId = it.secondMember.id
 
-        return if (sender != null && receiver != null) {
-            val conversation = Conversation(
-                members = arrayListOf(
-                    sender.id,
-                    receiver.id
-                ),
-                timestamp = System.currentTimeMillis(),
-            )
+            val lastMessage = messageLocalDataSource.findLastMessageBy(firstId, secondId)
+            val unreadCount = messageLocalDataSource.getUnreadCount(firstId, secondId)
 
-            conversationLocalDataSource.insertConversation(conversation)
-        } else null
-    }
-
-    suspend fun getConversationsBy(userId: String): List<ConversationResponse> {
-        return conversationLocalDataSource.findConversationsBy(userId).map { conversation ->
-            conversation.toResponse(userId)
+            it.toResponse(lastMessage = lastMessage?.text, unreadCount = unreadCount)
         }
     }
 
-    suspend fun findConversationsBy(firstId: String, secondId: String): ConversationResponse? {
-        return conversationLocalDataSource.findConversationBy(firstId, secondId)?.toResponse(firstId)
+    suspend fun findConversationBy(firstId: Int, secondId: Int): ConversationResponse? {
+        return conversationLocalDataSource.findConversationBy(firstId, secondId)?.let {
+            val lastMessage = messageLocalDataSource.findLastMessageBy(firstId, secondId)
+            val unreadCount = messageLocalDataSource.getUnreadCount(firstId, secondId)
+
+            return it.toResponse(lastMessage = lastMessage?.text, unreadCount = unreadCount)
+        }
     }
 }

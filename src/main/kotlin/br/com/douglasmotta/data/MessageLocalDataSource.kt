@@ -1,16 +1,19 @@
 package br.com.douglasmotta.data
 
+import br.com.douglasmotta.data.db.table.MessageEntity
 import br.com.douglasmotta.data.model.Message
 
 interface MessageLocalDataSource {
 
-    suspend fun findMessagesBy(conversationId: String): List<Message>
+    // suspend fun findMessagesBy(conversationId: String): List<Message>
 
-    suspend fun findLastMessageBy(conversationId: String): Message?
+    suspend fun findMessagesBy(senderId: Int, receiverId: Int): List<MessageEntity>
 
-    suspend fun totalUnread(conversationId: String, userId: String): Int
+    suspend fun findLastMessageBy(senderId: Int, receiverId: Int): Message?
 
-    suspend fun markMessageAsRead(messageId: String)
+    suspend fun getUnreadCount(senderId: Int, receiverId: Int): Int
 
-    suspend fun insertMessage(message: Message): Message
+    suspend fun markMessageAsRead(messageId: Int)
+
+    suspend fun insertMessage(entity: MessageEntity): Int
 }

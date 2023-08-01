@@ -1,11 +1,11 @@
 package br.com.douglasmotta.data.model
 
-import org.bson.codecs.pojo.annotations.BsonId
-import org.bson.types.ObjectId
+import java.time.Instant
 
 data class Conversation(
-    @BsonId
-    val id: String = ObjectId().toString(),
-    val members: ArrayList<String>,
-    val timestamp: Long
+    val id: Int = 0,
+    val firstMember: User,
+    val secondMember: User,
+    val timestamp: Instant,
+    val lastMessage: String? = null
 )

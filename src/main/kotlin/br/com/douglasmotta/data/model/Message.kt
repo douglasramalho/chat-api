@@ -1,16 +1,12 @@
 package br.com.douglasmotta.data.model
 
-import kotlinx.serialization.Serializable
-import org.bson.codecs.pojo.annotations.BsonId
-import org.bson.types.ObjectId
+import java.time.Instant
 
-@Serializable
 data class Message(
-    @BsonId
-    val id: String = ObjectId().toString(),
-    val conversationId: String,
-    val senderId: String,
+    val id: Int = 0,
+    val sender: User,
+    val receiver: User,
     val text: String,
-    val timestamp: Long,
+    val timestamp: Instant,
     val isUnread: Boolean
 )

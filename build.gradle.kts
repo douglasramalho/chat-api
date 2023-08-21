@@ -52,6 +52,8 @@ dependencies {
 
     implementation("mysql", "mysql-connector-java","8.0.19")
 
+    implementation("io.ktor:ktor-server-swagger:$ktor_version")
+
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
 }

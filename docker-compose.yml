@@ -23,8 +23,6 @@ services:
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
-    networks:
-      - my-network
     container_name: pma
     links:
       - db

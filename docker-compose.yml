@@ -4,9 +4,36 @@ services:
     build: .
     environment:
       JWT_SECRET: jwt-secret
-      DB_URL: jdbc:mysql://localhost:3306/douglasmotta_chat_db
+      DB_URL: jdbc:mysql://db:3307/douglasmotta_chat_db
       DB_USER: douglasmotta_chat
       DB_PASSWORD: NVAq&k%6NAaH
     ports:
       - "8080:8080"
     restart: always
+    depends_on:
+      - db
+  db:
+    image: mysql:8
+    volumes:
+      - chat_db_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: douglas110291
+    ports:
+      - "3307:3306"
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    networks:
+      - my-network
+    container_name: pma
+    links:
+      - db
+    environment:
+      PMA_HOST: db
+      PMA_ARBITRARY: 1
+    restart: always
+    ports:
+      - "8081:80"
+
+volumes:
+  chat_db_data:

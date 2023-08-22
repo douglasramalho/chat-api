@@ -17,7 +17,7 @@ services:
     volumes:
       - chat_db_data:/var/lib/mysql
     networks:
-      - my-network
+      my-network:
     environment:
       MYSQL_ROOT_PASSWORD: douglas110291
     ports:
@@ -43,6 +43,10 @@ services:
 # Define networks
 networks:
   my-network:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.16.100.0/24
 
 volumes:
   chat_db_data:

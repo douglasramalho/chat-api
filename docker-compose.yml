@@ -27,7 +27,7 @@ services:
       - mysql-phpmyadmin
 
   phpmyadmin:
-    image: phpmyadmin/phpmyadmin
+    image: phpmyadmin
     container_name: pma
     links:
       - db

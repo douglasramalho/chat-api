@@ -5,7 +5,7 @@ services:
     environment:
       JWT_SECRET: jwt-secret
       DB_URL: jdbc:mysql://db:3307/douglasmotta_chat_db
-      DB_USER: root
+      DB_USER: douglasmotta_chat
       DB_PASSWORD: h^U&98wqkP^8
       DB_PORT: 8080
     ports:

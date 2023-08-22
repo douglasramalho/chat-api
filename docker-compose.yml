@@ -17,7 +17,7 @@ services:
     volumes:
       - chat_db_data:/var/lib/mysql
     environment:
-      MYSQL_ROOT_PASSWORD: NVAq&k%6NAaH
+      MYSQL_ROOT_PASSWORD: douglas110291
     ports:
       - "3307:3306"
 

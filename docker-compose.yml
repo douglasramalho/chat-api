@@ -18,6 +18,9 @@ services:
       - chat_db_data:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: douglas110291
+      MYSQL_DATABASE: database_name
+      MYSQL_USER: user_name
+      MYSQL_PASSWORD: user_password
     ports:
       - "3307:3306"
     networks:
@@ -26,17 +29,18 @@ services:
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     container_name: pma
-    depends_on:
+    links:
       - db
     environment:
-      MYSQL_ROOT_PASSWORD: douglas110291
       PMA_HOST: db
-      PMA_PORT: 3307
+      PMA_PORT: 3306
     networks:
       - mysql-phpmyadmin
     restart: always
     ports:
       - "8081:80"
+
+
 networks:
   mysql-phpmyadmin:
 

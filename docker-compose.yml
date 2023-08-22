@@ -30,10 +30,11 @@ services:
     container_name: pma
     depends_on:
       - db
+    links:
+      - db
     environment:
+      MYSQL_ROOT_PASSWORD: douglas110291
       PMA_HOST: db
-      PMA_PORT: 3306
-      PMA_ARBITRARY: 1
     restart: always
     ports:
       - "8081:80"

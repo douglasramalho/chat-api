@@ -20,7 +20,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: h^U&98wqkP^8
     ports:
-      - "3306:3307"
+      - "3307:3306"
 
 volumes:
   chat_db_data:

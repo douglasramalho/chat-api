@@ -6,7 +6,7 @@ services:
       JWT_SECRET: jwt-secret
       DB_URL: jdbc:mysql://db:3306/douglasmotta_chat_db
       DB_USER: douglasmotta_chat
-      DB_PASSWORD: h^U&98wqkP^8
+      DB_PASSWORD: NVAq&k%6NAaH
       DB_PORT: 3306
     ports:
       - "8080:8080"
@@ -18,7 +18,7 @@ services:
     volumes:
       - chat_db_data:/var/lib/mysql
     environment:
-      MYSQL_ROOT_PASSWORD: h^U&98wqkP^8
+      MYSQL_ROOT_PASSWORD: NVAq&k%6NAaH
     ports:
       - "3307:3306"
 

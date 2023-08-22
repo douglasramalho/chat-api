@@ -4,9 +4,9 @@ services:
     build: .
     environment:
       JWT_SECRET: jwt-secret
-      DB_URL: jdbc:mysql://db:3306/chat_db
+      DB_URL: jdbc:mysql://db:3306/douglasmotta_chat_db
       DB_USER: root
-      DB_PASSWORD: dougl@s110291
+      DB_PASSWORD: h^U&98wqkP^8
       DB_PORT: 8080
     ports:
       - "8080:8080"
@@ -18,7 +18,7 @@ services:
     volumes:
       - chat_db_data:/var/lib/mysql
     environment:
-      MYSQL_ROOT_PASSWORD: dougl@s110291
+      MYSQL_ROOT_PASSWORD: h^U&98wqkP^8
     ports:
       - "3306:3306"
 

@@ -14,13 +14,13 @@ object DbHelper {
     private var dbPwd = ""
 
     fun Application.configureDbVariables() {
-        dbUrl = environment.config.propertyOrNull("db.config.db_url")?.getString() ?: ""
-        dbUser = environment.config.propertyOrNull("db.config.db_user")?.getString() ?: ""
-        dbPwd = environment.config.propertyOrNull("db.config.db_pwd")?.getString() ?: ""
+        dbUrl = System.getenv("DB_URL")
+        dbUser = System.getenv("DB_USER")
+        dbPwd = System.getenv("DB_PASSWORD")
     }
 
     fun database() = Database.connect(
-        dbUrl,
+        url = dbUrl,
         user = dbUser,
         password = dbPwd
     )

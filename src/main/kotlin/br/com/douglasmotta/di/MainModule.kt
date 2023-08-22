@@ -10,17 +10,8 @@ import br.com.douglasmotta.security.hashing.SHA256HashingService
 import br.com.douglasmotta.security.token.JwtTokenService
 import br.com.douglasmotta.security.token.TokenService
 import org.koin.dsl.module
-import org.litote.kmongo.coroutine.coroutine
-import org.litote.kmongo.reactivestreams.KMongo
 
 val mainModule = module {
-    val mongoPassword = System.getenv("MONGO_PASSWORD")
-    single {
-        KMongo.createClient("mongodb+srv://douglas1102rm:$mongoPassword@cluster0.gha7dqu.mongodb.net/chat?retryWrites=majority")
-            .coroutine
-            .getDatabase("chat")
-    }
-
     single<UserLocalDataSource> {
         UserDbLocalDataSourceImpl()
     }

@@ -2,17 +2,13 @@ package br.com.douglasmotta.data
 
 import br.com.douglasmotta.data.db.DbHelper
 import br.com.douglasmotta.data.db.messages
-import br.com.douglasmotta.data.db.table.*
-import br.com.douglasmotta.data.db.users
+import br.com.douglasmotta.data.db.table.MessageEntity
+import br.com.douglasmotta.data.db.table.toModel
 import br.com.douglasmotta.data.model.Message
-import br.com.douglasmotta.data.model.User
-import org.ktorm.database.Database
 import org.ktorm.dsl.and
 import org.ktorm.dsl.eq
 import org.ktorm.dsl.or
 import org.ktorm.entity.*
-import org.litote.kmongo.coroutine.CoroutineDatabase
-import org.litote.kmongo.or
 
 class MessageDbDataSourceImpl : MessageLocalDataSource {
 

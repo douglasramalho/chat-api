@@ -4,15 +4,19 @@ val logback_version: String by project
 val koin_version: String by project
 val kmongo_version: String by project
 val commons_codec_version: String by project
+val ktorm_core_version: String by project
+val ktorm_support_mysql_version: String by project
+val mysql_connector_java_version: String by project
 
 plugins {
     kotlin("jvm") version "1.8.21"
-    id("io.ktor.plugin") version "2.3.0"
+    id("io.ktor.plugin") version "2.3.3"
     id("org.jetbrains.kotlin.plugin.serialization") version "1.8.21"
 }
 
 group = "br.com.douglasmotta"
 version = "0.0.1"
+
 application {
     mainClass.set("io.ktor.server.netty.EngineMain")
 
@@ -42,15 +46,12 @@ dependencies {
 
     implementation("commons-codec:commons-codec:$commons_codec_version")
 
-    implementation("org.litote.kmongo:kmongo:$kmongo_version")
-    implementation("org.litote.kmongo:kmongo-coroutine:$kmongo_version")
-
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-slf4j:1.6.0")
 
-    implementation("org.ktorm:ktorm-core:3.5.0")
-    implementation("org.ktorm:ktorm-support-mysql:3.6.0")
+    implementation("org.ktorm:ktorm-core:$ktorm_core_version")
+    implementation("org.ktorm:ktorm-support-mysql:$ktorm_support_mysql_version")
 
-    implementation("mysql", "mysql-connector-java","8.0.19")
+    implementation("mysql", "mysql-connector-java", mysql_connector_java_version)
 
     implementation("io.ktor:ktor-server-swagger:$ktor_version")
 

@@ -16,6 +16,8 @@ services:
     image: mysql
     volumes:
       - chat_db_data:/var/lib/mysql
+    networks:
+      - my-network
     environment:
       MYSQL_ROOT_PASSWORD: douglas110291
     ports:
@@ -23,15 +25,22 @@ services:
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
+    networks:
+      - my-network
     container_name: pma
-    links:
+    depends_on:
       - db
     environment:
       PMA_HOST: db
+      PMA_PORT: 3306
       PMA_ARBITRARY: 1
     restart: always
     ports:
       - "8081:80"
+
+# Define networks
+networks:
+  my-network:
 
 volumes:
   chat_db_data:

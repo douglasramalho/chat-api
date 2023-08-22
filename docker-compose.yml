@@ -13,7 +13,7 @@ services:
     depends_on:
       - db
   db:
-    image: mysql:8
+    image: mysql
     volumes:
       - chat_db_data:/var/lib/mysql
     environment:
@@ -28,6 +28,7 @@ services:
       - db
     environment:
       PMA_HOST: db
+      PMA_PORT: 3306
       PMA_ARBITRARY: 1
     restart: always
     ports:

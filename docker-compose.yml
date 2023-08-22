@@ -4,10 +4,10 @@ services:
     build: .
     environment:
       JWT_SECRET: jwt-secret
-      DB_URL: jdbc:mysql://db:3306/douglasmotta_chat_db
+      DB_URL: jdbc:mysql://db:3307/douglasmotta_chat_db
       DB_USER: douglasmotta_chat
       DB_PASSWORD: h^U&98wqkP^8
-      DB_PORT: 8080
+      DB_PORT: 3307
     ports:
       - "8080:8080"
     restart: always

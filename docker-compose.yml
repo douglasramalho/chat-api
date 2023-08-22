@@ -18,6 +18,8 @@ services:
       - chat_db_data:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: douglas110291
+      MYSQL_USER: user
+      MYSQL_PASSWORD: test
     ports:
       - "3307:3306"
 
@@ -27,8 +29,10 @@ services:
     links:
       - db
     environment:
-      MYSQL_ROOT_PASSWORD: douglas110291
       PMA_HOST: db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: test
+      MYSQL_ROOT_PASSWORD: douglas110291
       PMA_PORT: 3306
       PMA_ARBITRARY: 1
     restart: always

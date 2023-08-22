@@ -33,7 +33,9 @@ services:
     links:
       - db
     environment:
+      MYSQL_ROOT_PASSWORD: douglas110291
       PMA_HOST: db
+      PMA_PORT: 3307
     restart: always
     ports:
       - "8081:80"

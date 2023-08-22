@@ -28,7 +28,6 @@ services:
       - db
     environment:
       PMA_HOST: db
-      MYSQL_ROOT_PASSWORD: douglas110291
       PMA_PORT: 3307
       PMA_ARBITRARY: 1
     restart: always

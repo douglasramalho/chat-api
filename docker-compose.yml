@@ -33,7 +33,6 @@ services:
     links:
       - db
     environment:
-      MYSQL_ROOT_PASSWORD: douglas110291
       PMA_HOST: db
     restart: always
     ports:

@@ -5,7 +5,7 @@ services:
     image: nginx:1.25
     restart: always
     ports:
-      - "81:80"
+      - "80:80"
     volumes:
       - ./nginx/conf.d/:/etc/nginx/conf.d/:ro
     networks:

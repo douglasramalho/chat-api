@@ -1,5 +1,17 @@
 version: "3"
 services:
+  nginx:
+    container_name: chat-nginx
+    image: nginx:1.25
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+    networks:
+      - mysql-phpmyadmin
+
   web:
     build: .
     environment:
@@ -18,8 +30,6 @@ services:
   phpmyadmin:
     image: phpmyadmin
     container_name: pma
-    links:
-      - db
     environment:
       PMA_HOST: db
       PMA_PORT: 3306
@@ -30,7 +40,7 @@ services:
       - "8081:80"
 
   db:
-    image: mysql
+    image: mysql:8
     volumes:
       - chat_data:/var/lib/mysql
     environment:

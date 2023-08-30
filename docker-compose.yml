@@ -5,14 +5,14 @@ services:
     image: nginx:1.25
     restart: always
     ports:
-      - "81:80"
+      - "8001:80"
     volumes:
       - ./nginx/conf.d/:/etc/nginx/conf.d/:ro
     networks:
-      - mysql-phpmyadmin
-
+      - backend
   web:
     build: .
+    container_name: app
     environment:
       JWT_SECRET: jwt-secret
       DB_URL: jdbc:mysql://db:3306/chat_db
@@ -22,7 +22,7 @@ services:
       - "8080:8080"
     restart: always
     networks:
-      - mysql-phpmyadmin
+      - backend
     depends_on:
       - db
 
@@ -33,10 +33,10 @@ services:
       PMA_HOST: db
       PMA_PORT: 3306
     networks:
-      - mysql-phpmyadmin
+      - backend
     restart: always
     ports:
-      - "8081:80"
+      - "8082:80"
 
   db:
     image: mysql:8
@@ -47,10 +47,10 @@ services:
     ports:
       - "3307:3306"
     networks:
-      - mysql-phpmyadmin
+      - backend
 
 networks:
-  mysql-phpmyadmin:
+  backend:
 
 volumes:
   chat_data:

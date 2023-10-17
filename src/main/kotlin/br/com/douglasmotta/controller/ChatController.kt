@@ -11,6 +11,7 @@ import br.com.douglasmotta.data.request.MessageRequest
 import br.com.douglasmotta.data.response.ConversationResponse
 import br.com.douglasmotta.data.response.MessageResponse
 import br.com.douglasmotta.data.model.ChatConnection
+import br.com.douglasmotta.data.response.OnlineStatusResponse
 import io.ktor.websocket.*
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -112,6 +113,14 @@ class ChatController(
 
     suspend fun readMessage(messageId: Int) {
         messageLocalDataSource.markMessageAsRead(messageId)
+    }
+
+    suspend fun sendOnlineStatus(userId: Int, receiverId: Int) {
+        connections.firstOrNull { it.userId == userId }?.let { connection ->
+            val isOnline = connections.firstOrNull { it.userId == receiverId } != null
+            val onlineStatusJsonText = Json.encodeToString<OnlineStatusResponse>(OnlineStatusResponse(isOnline))
+            connection.session.send(Frame.Text("isOnlineStatus#$onlineStatusJsonText"))
+        }
     }
 
     suspend fun tryDisconnect(userId: Int) {

@@ -1,8 +1,7 @@
 package br.com.douglasmotta.routes
 
-import br.com.douglasmotta.data.UserLocalDataSource
-import br.com.douglasmotta.data.db.table.UserEntity
-import br.com.douglasmotta.data.model.User
+import br.com.douglasmotta.controller.AuthController
+import br.com.douglasmotta.controller.UserController
 import br.com.douglasmotta.data.request.AuthUserRequest
 import br.com.douglasmotta.data.request.CreateUserRequest
 import br.com.douglasmotta.data.response.AuthResponse
@@ -21,7 +20,7 @@ import io.ktor.server.routing.*
 
 fun Route.signUp(
     hashingService: HashingService,
-    userLocalDataSource: UserLocalDataSource
+    userController: AuthController,
 ) {
     post("signup") {
         val request = call.receiveNullable<CreateUserRequest>() ?: kotlin.run {
@@ -29,14 +28,18 @@ fun Route.signUp(
             return@post
         }
 
-        val areFieldsBlank = request.username.isBlank() || request.password.isBlank() || request.firstName.isBlank() || request.lastName.isBlank()
+        val areFieldsBlank =
+            request.username.isBlank() || request.password.isBlank() || request.firstName.isBlank() || request.lastName.isBlank()
         val isPasswordTooShort = request.password.length < 8
         if (areFieldsBlank || isPasswordTooShort) {
-            call.respond(HttpStatusCode.BadRequest, "Mandatory fields: Username, Password, First Name and Last Name. Password should have at least 8 chars.")
+            call.respond(
+                HttpStatusCode.BadRequest,
+                "Mandatory fields: Username, Password, First Name and Last Name. Password should have at least 8 chars."
+            )
             return@post
         }
 
-        val existentUserWithUsername = userLocalDataSource.getUserByUsername(request.username)
+        val existentUserWithUsername = userController.getUserByUsername(request.username)
         if (existentUserWithUsername != null) {
             call.respond(HttpStatusCode.Conflict, "Username already exists. Please choose a different username.")
             return@post
@@ -44,16 +47,7 @@ fun Route.signUp(
 
         val saltedHash = hashingService.generateSaltedHash(request.password)
 
-        val userEntity = UserEntity {
-            username = request.username
-            password = saltedHash.hash
-            salt = saltedHash.salt
-            firstName = request.firstName
-            lastName = request.lastName
-            profilePictureUrl = request.profilePictureUrl
-        }
-
-        val wasAcknowledged = userLocalDataSource.insertUser(userEntity)
+        val wasAcknowledged = userController.insertUser(request, saltedHash.hash, saltedHash.salt)
         if (!wasAcknowledged) {
             call.respond(HttpStatusCode.Conflict)
             return@post
@@ -65,7 +59,7 @@ fun Route.signUp(
 
 fun Route.signIn(
     hashingService: HashingService,
-    userLocalDataSource: UserLocalDataSource,
+    authController: AuthController,
     tokenService: TokenService,
     tokenConfig: TokenConfig,
 ) {
@@ -75,7 +69,7 @@ fun Route.signIn(
             return@post
         }
 
-        val user = userLocalDataSource.getUserByUsername(request.username)
+        val user = authController.getUserByUsername(request.username)
         if (user == null) {
             call.respond(HttpStatusCode.Conflict)
             return@post
@@ -110,10 +104,26 @@ fun Route.signIn(
     }
 }
 
-fun Route.authenticate() {
+fun Route.authenticate(
+    userController: UserController,
+) {
     authenticate {
         get("authenticate") {
-            call.respond(HttpStatusCode.OK)
+            val principal = call.principal<JWTPrincipal>()
+            val userId = principal?.getClaim("userId", String::class)
+            val userResponse = userId?.let {
+                userController.getUserBy(it.toInt())
+            }
+
+            userResponse?.let {
+                call.respond(
+                    status = HttpStatusCode.OK,
+                    message = userResponse
+                )
+                return@get
+            }
+
+            call.respond(HttpStatusCode.Unauthorized)
         }
     }
 }

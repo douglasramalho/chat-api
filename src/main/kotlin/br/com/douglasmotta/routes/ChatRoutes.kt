@@ -35,6 +35,10 @@ fun Route.chatSocket(chatController: ChatController) {
                             chatController.readMessage(action.messageId.toInt())
                         }
 
+                        is SocketAction.GetOnlineStatus -> {
+                            chatController.sendOnlineStatus(action.userId.toInt(), action.receiverId.toInt())
+                        }
+
                         else -> {
                         }
                     }

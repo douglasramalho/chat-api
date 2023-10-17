@@ -4,5 +4,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class OnlineStatusResponse(
-   val isOnline: Boolean
+   val onlineUserIds: List<Int>
 )

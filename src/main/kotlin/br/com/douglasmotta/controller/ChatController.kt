@@ -26,7 +26,7 @@ class ChatController(
 
     private val connections = Collections.synchronizedSet<ChatConnection?>(LinkedHashSet())
 
-    fun onJoin(
+    suspend fun onJoin(
         userId: Int,
         socket: DefaultWebSocketSession,
     ) {
@@ -35,6 +35,7 @@ class ChatController(
         }
 
         connections += ChatConnection(userId, socket)
+        sendOnlineStatus()
     }
 
     suspend fun sendMessage(senderId: Int, messageRequest: MessageRequest) {
@@ -115,11 +116,11 @@ class ChatController(
         messageLocalDataSource.markMessageAsRead(messageId)
     }
 
-    suspend fun sendOnlineStatus(userId: Int, receiverId: Int) {
-        connections.firstOrNull { it.userId == userId }?.let { connection ->
-            val isOnline = connections.firstOrNull { it.userId == receiverId } != null
-            val onlineStatusJsonText = Json.encodeToString<OnlineStatusResponse>(OnlineStatusResponse(isOnline))
-            connection.session.send(Frame.Text("isOnlineStatus#$onlineStatusJsonText"))
+    private suspend fun sendOnlineStatus() {
+        val onlineUserIds = connections.map { it.userId }
+        val onlineUserIdsJsonText = Json.encodeToString<OnlineStatusResponse>(OnlineStatusResponse(onlineUserIds))
+        connections.forEach {
+            it.session.send(Frame.Text("onlineUserIds#$onlineUserIdsJsonText"))
         }
     }
 
@@ -128,5 +129,7 @@ class ChatController(
             connection.session.close()
             connections -= connection
         }
+
+        sendOnlineStatus()
     }
 }

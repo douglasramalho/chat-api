@@ -6,5 +6,4 @@ sealed class SocketAction {
     data class NewMessage(val request: MessageRequest) : SocketAction()
     data class GetConversations(val userId: String) : SocketAction()
     data class MarkMessageAsRead(val messageId: String) : SocketAction()
-    data class GetOnlineStatus(val receiverId: String) : SocketAction()
 }

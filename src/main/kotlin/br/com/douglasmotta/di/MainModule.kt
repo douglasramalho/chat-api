@@ -1,10 +1,7 @@
 package br.com.douglasmotta.di
 
-import br.com.douglasmotta.controller.ChatController
+import br.com.douglasmotta.controller.*
 import br.com.douglasmotta.data.*
-import br.com.douglasmotta.controller.ConversationController
-import br.com.douglasmotta.controller.MessageController
-import br.com.douglasmotta.controller.UserController
 import br.com.douglasmotta.security.hashing.HashingService
 import br.com.douglasmotta.security.hashing.SHA256HashingService
 import br.com.douglasmotta.security.token.JwtTokenService
@@ -30,6 +27,10 @@ val mainModule = module {
 
     single<ConversationLocalDataSource> {
         ConversationDbDataSourceImpl()
+    }
+
+    single {
+        AuthController(get())
     }
 
     single {

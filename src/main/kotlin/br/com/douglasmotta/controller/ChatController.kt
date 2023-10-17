@@ -116,7 +116,7 @@ class ChatController(
         messageLocalDataSource.markMessageAsRead(messageId)
     }
 
-    private suspend fun sendOnlineStatus() {
+    suspend fun sendOnlineStatus() {
         val onlineUserIds = connections.map { it.userId }
         val onlineUserIdsJsonText = Json.encodeToString<OnlineStatusResponse>(OnlineStatusResponse(onlineUserIds))
         connections.forEach {

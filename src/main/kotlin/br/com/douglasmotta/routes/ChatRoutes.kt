@@ -35,6 +35,10 @@ fun Route.chatSocket(chatController: ChatController) {
                             chatController.readMessage(action.messageId.toInt())
                         }
 
+                        is SocketAction.GetOnlineStatus -> {
+                            chatController.sendOnlineStatus()
+                        }
+
                         else -> {
                         }
                     }
@@ -65,6 +69,10 @@ private fun extractAction(message: String): SocketAction? {
 
         "markMessageAsRead" -> {
             SocketAction.MarkMessageAsRead(body)
+        }
+
+        "getOnlineStatus" -> {
+            SocketAction.GetOnlineStatus
         }
 
         else -> null

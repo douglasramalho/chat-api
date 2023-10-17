@@ -80,7 +80,7 @@ class ChatController(
 
             connections.forEach { connection ->
                 if (connection.userId == senderId || connection.userId == messageRequest.receiverId) {
-                    connection.session.send(Frame.Text(messageResponseJsonText))
+                    connection.session.send(Frame.Text("newMessage#$messageResponseJsonText"))
                 }
             }
 

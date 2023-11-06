@@ -48,6 +48,7 @@ services:
       - "3307:3306"
     networks:
       - backend
+    restart: always
 
 networks:
   backend:

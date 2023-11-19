@@ -36,6 +36,6 @@ jobs:
         ssh-keyscan -p 22022 -t ed25519 ${{ secrets.SERVER_SSH_HOST }} >> ~/.ssh/known_hosts
         
     - name: connect and pull
-      run: ssh -p 22022 ${{ secrets.SERER_SSH_USER }}@${{ secrets.SERVER_SSH_HOST }} "cd ${{ secrets.SERVER_WORK_DIR }} && exit"
+      run: ssh -p 22022 ${{ secrets.SERER_SSH_USER }}@${{ secrets.SERVER_SSH_HOST }}
     - name: cleanup
       run: rm -rf ~/.ssh

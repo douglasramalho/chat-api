@@ -26,12 +26,15 @@ jobs:
       with:
         java-version: '11'
         distribution: 'temurin'
-    
-    - name: Setup Gradle
-      uses: gradle/gradle-build-action@v2
 
-    - name: Set gradlew permision
-      run: chmod +x ./gradlew
-    
-    - name: Run build with Gradle Wrapper
-      run: ./gradlew buildFatJar
+    - name: install ssh keys
+      # check this thread to understand why its needed:
+      # https://stackoverflow.com/a/70447517
+      run: |
+        install -m 600 -D /dev/null ~/.ssh/id_rsa
+        echo "${{ secrets.SERVER_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        ssh-keyscan -H ${{ secrets.SERVER_SSH_HOST }} > ~/.ssh/known_hosts
+    - name: connect and pull
+      run: ssh ${{ secrets.SERER_SSH_USER }}@${{ secrets.SERVER_SSH_HOST }} "cd ${{ secrets.SERVER_WORK_DIR }} && git checkout ${{ secrets.MAIN_BRANCH }} && git pull && chmod +x ./gradlew && ./gradlew buildFatJar && exit"
+    - name: cleanup
+      run: rm -rf ~/.ssh

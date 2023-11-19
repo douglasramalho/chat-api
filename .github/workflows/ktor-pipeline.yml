@@ -36,6 +36,6 @@ jobs:
         ssh-keyscan -p 22022 -t ed25519 ${{ secrets.SERVER_SSH_HOST }} >> ~/.ssh/known_hosts
         
     - name: connect and pull
-      run: ssh -i $HOME/.ssh/id_ed25519 -p 22022 "cd ${{ secrets.SERVER_WORK_DIR }} && git checkout ${{ secrets.MAIN_BRANCH }} && git pull && chmod +x ./gradlew && ./gradlew buildFatJar && exit"
+      run: ssh -i $HOME/.ssh/id_ed25519 -p 22022 ${{ secrets.SERVER_SSH_USER }}@${{ secrets.SERVER_SSH_HOST }} "cd ${{ secrets.SERVER_WORK_DIR }} && git checkout ${{ secrets.MAIN_BRANCH }} && git pull && chmod +x ./gradlew && ./gradlew buildFatJar && exit"
     - name: cleanup
       run: rm -rf ~/.ssh

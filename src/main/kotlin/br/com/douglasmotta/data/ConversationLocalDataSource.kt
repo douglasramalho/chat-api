@@ -5,7 +5,11 @@ import br.com.douglasmotta.data.model.Conversation
 
 interface ConversationLocalDataSource {
 
-    suspend fun findConversationsBy(userId: Int): List<ConversationEntity>
+    suspend fun findConversationsBy(
+        userId: Int,
+        offset: Int = 0,
+        limit: Int = 10,
+    ): List<ConversationEntity>
 
     suspend fun findConversationBy(firstId: Int, secondId: Int): ConversationEntity?
 

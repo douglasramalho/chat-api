@@ -7,6 +7,7 @@ val commons_codec_version: String by project
 val ktorm_core_version: String by project
 val ktorm_support_mysql_version: String by project
 val mysql_connector_java_version: String by project
+val sagger_ui_version: String by project
 
 plugins {
     kotlin("jvm") version "1.8.21"
@@ -15,7 +16,7 @@ plugins {
 }
 
 group = "br.com.douglasmotta"
-version = "0.0.1"
+version = "0.0.3"
 
 application {
     mainClass.set("io.ktor.server.netty.EngineMain")
@@ -39,6 +40,7 @@ dependencies {
     implementation("io.ktor:ktor-server-auth-jwt-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-netty-jvm:$ktor_version")
     implementation("ch.qos.logback:logback-classic:$logback_version")
+    implementation("io.github.smiley4:ktor-swagger-ui:$sagger_ui_version")
 
     implementation("io.insert-koin:koin-core:$koin_version")
     implementation("io.insert-koin:koin-ktor:$koin_version")
@@ -57,4 +59,8 @@ dependencies {
 
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
+}
+
+kotlin { // Extension for easy setup
+    jvmToolchain(11) // Target version of generated JVM bytecode. See 7️⃣
 }

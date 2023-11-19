@@ -10,9 +10,16 @@ class ConversationController(
     private val messageLocalDataSource: MessageLocalDataSource,
 ) {
 
-    suspend fun getConversationsBy(userId: Int): List<ConversationResponse> {
-        return conversationLocalDataSource.findConversationsBy(userId).map {
-
+    suspend fun getConversationsBy(
+        userId: Int,
+        offset: Int,
+        limit: Int
+    ): List<ConversationResponse> {
+        return conversationLocalDataSource.findConversationsBy(
+            userId = userId,
+            offset = offset,
+            limit = limit,
+        ).map {
             val firstId = it.firstMember.id
             val secondId = it.secondMember.id
 

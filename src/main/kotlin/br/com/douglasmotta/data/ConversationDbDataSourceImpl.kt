@@ -3,22 +3,33 @@ package br.com.douglasmotta.data
 import br.com.douglasmotta.data.db.DbHelper
 import br.com.douglasmotta.data.db.conversations
 import br.com.douglasmotta.data.db.table.ConversationEntity
-import org.ktorm.dsl.and
-import org.ktorm.dsl.eq
-import org.ktorm.dsl.or
+import br.com.douglasmotta.data.db.table.Conversations
+import org.ktorm.dsl.*
 import org.ktorm.entity.add
-import org.ktorm.entity.filter
 import org.ktorm.entity.find
-import org.ktorm.entity.map
 
 class ConversationDbDataSourceImpl : ConversationLocalDataSource {
 
     private val database = DbHelper.database()
 
-    override suspend fun findConversationsBy(userId: Int): List<ConversationEntity> {
-        return database.conversations.filter {
-            it.firstMemberId eq userId or(it.secondMemberId eq userId)
-        }.map { it }
+    override suspend fun findConversationsBy(
+        userId: Int,
+        offset: Int,
+        limit: Int,
+    ): List<ConversationEntity> {
+        val result = database
+            .from(Conversations)
+            .joinReferencesAndSelect()
+            .where {
+                Conversations.firstMemberId eq userId or (Conversations.secondMemberId eq userId)
+            }
+            .limit(offset = offset, limit = limit)
+            .orderBy(Conversations.timestamp.asc())
+            .map { row ->
+                Conversations.createEntity(row)
+            }
+
+        return result
     }
 
     override suspend fun findConversationBy(firstId: Int, secondId: Int): ConversationEntity? {

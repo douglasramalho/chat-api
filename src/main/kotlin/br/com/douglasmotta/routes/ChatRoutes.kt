@@ -79,33 +79,3 @@ private fun extractAction(message: String): SocketAction? {
     }
 }
 
-fun Route.conversation(conversationController: ConversationController) {
-    get("/conversations/{userId}") {
-        val userId = call.parameters["userId"] ?: throw IllegalArgumentException("UserId missing")
-        val conversations = conversationController.getConversationsBy(userId.toInt())
-        call.respond(conversations)
-    }
-
-    get("/conversations/find/{firstId}/{secondId}") {
-        val firstId = call.parameters["firstId"] ?: throw IllegalArgumentException("FirstId missing")
-        val secondId = call.parameters["secondId"] ?: throw IllegalArgumentException("SecondId missing")
-        val conversation = conversationController.findConversationBy(firstId.toInt(), secondId.toInt())
-        conversation?.let {
-            call.respond(it)
-        } ?: call.respond(HttpStatusCode(404, "Conversation not found"))
-    }
-}
-
-fun Route.message(messageController: MessageController) {
-    get("/messages/{senderId}/{receiverId}") {
-        val senderId = call.parameters["senderId"] ?: throw IllegalArgumentException("senderId missing")
-        val receiverId = call.parameters["receiverId"] ?: throw IllegalArgumentException("receiverId missing")
-
-        try {
-            val messages = messageController.getMessagesBy(senderId.toInt(), receiverId.toInt())
-            call.respond(messages)
-        } catch (e: Exception) {
-            call.respond(HttpStatusCode.InternalServerError, e)
-        }
-    }
-}

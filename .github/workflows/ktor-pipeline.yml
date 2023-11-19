@@ -40,3 +40,4 @@ jobs:
           git pull
           chmod +x ./gradlew
           ./gradlew buildFatJar
+          docker compose up -d --build

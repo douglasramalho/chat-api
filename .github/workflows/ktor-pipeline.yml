@@ -27,15 +27,16 @@ jobs:
         java-version: '11'
         distribution: 'temurin'
 
-    - name: Set up SSH key
-      run: |
-        env
-        mkdir -p ~/.ssh
-        echo "${{ secrets.SERVER_SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
-        chmod 600 ~/.ssh/id_ed25519
-        ssh-keyscan -p 22022 -t ed25519 ${{ secrets.SERVER_SSH_HOST }} >> ~/.ssh/known_hosts
-        
-    - name: connect and pull
-      run: ssh -i $HOME/.ssh/id_ed25519 -p 22022 ${{ secrets.SERVER_SSH_USER }}@${{ secrets.SERVER_SSH_HOST }} "cd ${{ secrets.SERVER_WORK_DIR }} && git checkout ${{ secrets.MAIN_BRANCH }} && git pull && chmod +x ./gradlew && ./gradlew buildFatJar && exit"
-    - name: cleanup
-      run: rm -rf ~/.ssh
+    - name: executing remote ssh commands using password
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.SERVER_SSH_HOST }}
+        username: ${{ secrets.SERVER_SSH_USER }}
+        password: ${{ secrets.SERVER_SSH_PASS }}
+        port: ${{ secrets.SERVER_SSH_PORT }}
+        script: |
+          cd ${{ secrets.SERVER_WORK_DIR }}
+          git checkout ${{ secrets.MAIN_BRANCH }}
+          git pull
+          chmod +x ./gradlew
+          ./gradlew buildFatJar

@@ -31,11 +31,11 @@ jobs:
       run: |
         env
         mkdir -p ~/.ssh
-        echo "${{ secrets.SERVER_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-        ssh-keyscan -p 22022 -t rsa ${{ secrets.SERVER_SSH_HOST }} >> ~/.ssh/known_hosts
+        echo "${{ secrets.SERVER_SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+        chmod 600 ~/.ssh/id_ed25519
+        ssh-keyscan -p 22022 -t ed25519 ${{ secrets.SERVER_SSH_HOST }} >> ~/.ssh/known_hosts
         
     - name: connect and pull
-      run: ssh -p 22022 ${{ secrets.SERVER_SSH_USER }}@${{ secrets.SERVER_SSH_HOST }} "cd ${{ secrets.SERVER_WORK_DIR }} && git checkout ${{ secrets.MAIN_BRANCH }} && git pull && chmod +x ./gradlew && ./gradlew buildFatJar && exit"
+      run: ssh -i $HOME/.ssh/id_ed25519 -p 22022 "cd ${{ secrets.SERVER_WORK_DIR }} && git checkout ${{ secrets.MAIN_BRANCH }} && git pull && chmod +x ./gradlew && ./gradlew buildFatJar && exit"
     - name: cleanup
       run: rm -rf ~/.ssh

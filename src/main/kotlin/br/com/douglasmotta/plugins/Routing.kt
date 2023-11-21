@@ -23,7 +23,6 @@ fun Application.configureRouting(tokenConfig: TokenConfig) {
         signUp(hashingService, authController)
         signIn(hashingService, authController, tokenService, tokenConfig)
         authenticate(userController)
-        getSecretInfo()
         chatSocket(chatController)
         conversation(conversationController)
         message(messageController)

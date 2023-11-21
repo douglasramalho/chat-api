@@ -5,15 +5,18 @@ import br.com.douglasmotta.controller.UserController
 import br.com.douglasmotta.data.request.AuthUserRequest
 import br.com.douglasmotta.data.request.CreateUserRequest
 import br.com.douglasmotta.data.response.AuthResponse
+import br.com.douglasmotta.data.response.UserResponse
+import br.com.douglasmotta.extension.getCurrentUserId
 import br.com.douglasmotta.security.hashing.HashingService
 import br.com.douglasmotta.security.hashing.SaltedHash
 import br.com.douglasmotta.security.token.TokenClaim
 import br.com.douglasmotta.security.token.TokenConfig
 import br.com.douglasmotta.security.token.TokenService
+import io.github.smiley4.ktorswaggerui.dsl.get
+import io.github.smiley4.ktorswaggerui.dsl.post
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
-import io.ktor.server.auth.jwt.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -22,7 +25,24 @@ fun Route.signUp(
     hashingService: HashingService,
     userController: AuthController,
 ) {
-    post("signup") {
+    post("signup", {
+        description = "Create a new user"
+        request {
+            body(CreateUserRequest::class)
+        }
+        response {
+            HttpStatusCode.OK to {
+                description = "Success"
+            }
+            HttpStatusCode.BadRequest to {
+                description =
+                    "Username, password, first name and last name are mandatory. Password should have at least 8 characters."
+            }
+            HttpStatusCode.Conflict to {
+                description = "User with the provided e-mail already exists. Please choose a different one."
+            }
+        }
+    }) {
         val request = call.receiveNullable<CreateUserRequest>() ?: kotlin.run {
             call.respond(HttpStatusCode.BadRequest)
             return@post
@@ -33,15 +53,20 @@ fun Route.signUp(
         val isPasswordTooShort = request.password.length < 8
         if (areFieldsBlank || isPasswordTooShort) {
             call.respond(
-                HttpStatusCode.BadRequest,
-                "Mandatory fields: Username, Password, First Name and Last Name. Password should have at least 8 chars."
+                HttpStatusCode.BadRequest.copy(
+                    description = "Username, password, first name and last name are mandatory. Password should have at least 8 characters."
+                )
             )
             return@post
         }
 
         val existentUserWithUsername = userController.getUserByUsername(request.username)
         if (existentUserWithUsername != null) {
-            call.respond(HttpStatusCode.Conflict, "Username already exists. Please choose a different username.")
+            call.respond(
+                HttpStatusCode.Conflict.copy(
+                    description = "User with the provided e-mail already exists. Please choose a different one."
+                )
+            )
             return@post
         }
 
@@ -63,7 +88,22 @@ fun Route.signIn(
     tokenService: TokenService,
     tokenConfig: TokenConfig,
 ) {
-    post("signin") {
+    post("signin", {
+        description = "Sign-in"
+        request {
+            body(AuthUserRequest::class)
+        }
+        response {
+            HttpStatusCode.OK to {
+                description = "Success"
+                body(AuthResponse::class)
+            }
+            HttpStatusCode.BadRequest
+            HttpStatusCode.Conflict to {
+                description = "Incorrect e-mail or password"
+            }
+        }
+    }) {
         val request = call.receiveNullable<AuthUserRequest>() ?: kotlin.run {
             call.respond(HttpStatusCode.BadRequest)
             return@post
@@ -83,7 +123,7 @@ fun Route.signIn(
             )
         )
         if (!isValidPassword) {
-            call.respond(HttpStatusCode.Conflict, "Incorrect username or password")
+            call.respond(HttpStatusCode.Conflict.copy(description = "Incorrect e-mail or password"))
             return@post
         }
 
@@ -108,9 +148,17 @@ fun Route.authenticate(
     userController: UserController,
 ) {
     authenticate {
-        get("authenticate") {
-            val principal = call.principal<JWTPrincipal>()
-            val userId = principal?.getClaim("userId", String::class)
+        get("authenticate", {
+            description = "Get the info of the current authenticated user"
+            response {
+                HttpStatusCode.OK to {
+                    description = "Success"
+                    body<UserResponse>()
+                }
+                HttpStatusCode.Unauthorized
+            }
+        }) {
+            val userId = call.getCurrentUserId()
             val userResponse = userId?.let {
                 userController.getUserBy(it.toInt())
             }
@@ -124,16 +172,6 @@ fun Route.authenticate(
             }
 
             call.respond(HttpStatusCode.Unauthorized)
-        }
-    }
-}
-
-fun Route.getSecretInfo() {
-    authenticate {
-        get("secret") {
-            val principal = call.principal<JWTPrincipal>()
-            val userId = principal?.getClaim("userId", String::class)
-            call.respond(HttpStatusCode.OK, "Your userId is $userId")
         }
     }
 }

@@ -4,6 +4,7 @@ import br.com.douglasmotta.data.ConversationLocalDataSource
 import br.com.douglasmotta.data.MessageLocalDataSource
 import br.com.douglasmotta.data.db.table.toResponse
 import br.com.douglasmotta.data.response.ConversationResponse
+import br.com.douglasmotta.data.response.ConversationsPaginatedResponse
 
 class ConversationController(
     private val conversationLocalDataSource: ConversationLocalDataSource,
@@ -14,8 +15,8 @@ class ConversationController(
         userId: Int,
         offset: Int,
         limit: Int
-    ): List<ConversationResponse> {
-        return conversationLocalDataSource.findConversationsBy(
+    ): ConversationsPaginatedResponse {
+        val conversations = conversationLocalDataSource.findConversationsBy(
             userId = userId,
             offset = offset,
             limit = limit,
@@ -28,6 +29,14 @@ class ConversationController(
 
             it.toResponse(lastMessage = lastMessage?.text, unreadCount = unreadCount)
         }
+
+        val totalMessagesCount = conversationLocalDataSource.getTotalConversationsCount()
+
+        return ConversationsPaginatedResponse(
+            conversations = conversations,
+            total = totalMessagesCount,
+            hasMore = offset + limit < totalMessagesCount
+        )
     }
 
     suspend fun findConversationBy(firstId: Int, secondId: Int): ConversationResponse? {

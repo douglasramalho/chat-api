@@ -12,7 +12,10 @@ import br.com.douglasmotta.data.response.ConversationResponse
 import br.com.douglasmotta.data.response.MessageResponse
 import br.com.douglasmotta.data.model.ChatConnection
 import br.com.douglasmotta.data.response.OnlineStatusResponse
+import io.ktor.serialization.*
+import io.ktor.server.websocket.*
 import io.ktor.websocket.*
+import io.ktor.websocket.serialization.*
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.time.Instant
@@ -35,7 +38,7 @@ class ChatController(
         }
 
         connections += ChatConnection(userId, socket)
-        sendOnlineStatus()
+        // sendOnlineStatus()
     }
 
     suspend fun sendMessage(senderId: Int, messageRequest: MessageRequest) {
@@ -81,7 +84,8 @@ class ChatController(
 
             connections.forEach { connection ->
                 if (connection.userId == senderId || connection.userId == messageRequest.receiverId) {
-                    connection.session.send(Frame.Text("newMessage#$messageResponseJsonText"))
+                    // connection.session.send(Frame.Text("newMessage#$messageResponseJsonText"))
+                    (connection.session as DefaultWebSocketServerSession).sendSerialized(messageResponse)
                 }
             }
 

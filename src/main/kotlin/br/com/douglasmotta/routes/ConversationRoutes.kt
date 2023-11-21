@@ -2,6 +2,7 @@ package br.com.douglasmotta.routes
 
 import br.com.douglasmotta.controller.ConversationController
 import br.com.douglasmotta.data.response.ConversationResponse
+import br.com.douglasmotta.data.response.ConversationsPaginatedResponse
 import br.com.douglasmotta.extension.getCurrentUserId
 import io.github.smiley4.ktorswaggerui.dsl.get
 import io.ktor.http.*
@@ -32,7 +33,7 @@ fun Route.conversation(conversationController: ConversationController) {
             response {
                 HttpStatusCode.OK to {
                     description = "Success"
-                    body<List<ConversationResponse>>()
+                    body<ConversationsPaginatedResponse>()
                 }
                 HttpStatusCode.Unauthorized
             }

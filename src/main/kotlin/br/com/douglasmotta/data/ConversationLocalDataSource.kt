@@ -14,4 +14,6 @@ interface ConversationLocalDataSource {
     suspend fun findConversationBy(firstId: Int, secondId: Int): ConversationEntity?
 
     suspend fun insertConversation(entity: ConversationEntity): Boolean
+
+    suspend fun getTotalConversationsCount(): Int
 }

@@ -4,6 +4,7 @@ import br.com.douglasmotta.data.db.DbHelper
 import br.com.douglasmotta.data.db.conversations
 import br.com.douglasmotta.data.db.table.ConversationEntity
 import br.com.douglasmotta.data.db.table.Conversations
+import br.com.douglasmotta.data.db.table.Messages
 import org.ktorm.dsl.*
 import org.ktorm.entity.add
 import org.ktorm.entity.find
@@ -41,5 +42,9 @@ class ConversationDbDataSourceImpl : ConversationLocalDataSource {
 
     override suspend fun insertConversation(entity: ConversationEntity): Boolean {
         return database.conversations.add(entity) > 0
+    }
+
+    override suspend fun getTotalConversationsCount(): Int {
+        return database.from(Conversations).select().totalRecordsInAllPages
     }
 }

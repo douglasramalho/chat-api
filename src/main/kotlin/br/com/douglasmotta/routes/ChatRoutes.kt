@@ -1,9 +1,7 @@
 package br.com.douglasmotta.routes
 
 import br.com.douglasmotta.controller.ChatController
-import br.com.douglasmotta.controller.ConversationController
 import br.com.douglasmotta.data.model.MemberAlreadyExistsException
-import br.com.douglasmotta.controller.MessageController
 import br.com.douglasmotta.data.model.SocketAction
 import br.com.douglasmotta.data.request.MessageRequest
 import io.ktor.http.*
@@ -13,7 +11,6 @@ import io.ktor.server.routing.*
 import io.ktor.server.websocket.*
 import io.ktor.websocket.*
 import kotlinx.coroutines.channels.consumeEach
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
 fun Route.chatSocket(chatController: ChatController) {

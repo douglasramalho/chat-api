@@ -38,7 +38,7 @@ class ChatController(
         }
 
         connections += ChatConnection(userId, socket)
-        // sendOnlineStatus()
+        sendOnlineStatus()
     }
 
     suspend fun sendMessage(senderId: Int, messageRequest: MessageRequest) {
@@ -84,8 +84,7 @@ class ChatController(
 
             connections.forEach { connection ->
                 if (connection.userId == senderId || connection.userId == messageRequest.receiverId) {
-                    // connection.session.send(Frame.Text("newMessage#$messageResponseJsonText"))
-                    (connection.session as DefaultWebSocketServerSession).sendSerialized(messageResponse)
+                    connection.session.send(Frame.Text("newMessage#$messageResponseJsonText"))
                 }
             }
 

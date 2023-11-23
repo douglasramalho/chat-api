@@ -50,6 +50,17 @@ services:
       - backend
     restart: always
 
+  flyway:
+    container_name: app-flyway
+    image: flyway/flyway
+    command: -url=jdbc:mysql://db:3306/chat_db -schemas=chat_db -user=root -password=douglas110291 -connectRetries=60 migrate
+    networks:
+      - backend
+    volumes:
+      - ./src/main/resources/db/migrations:/flyway/sql
+    depends_on:
+      - db
+
 networks:
   backend:
 

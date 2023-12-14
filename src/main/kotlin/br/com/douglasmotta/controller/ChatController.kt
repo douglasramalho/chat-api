@@ -12,6 +12,7 @@ import br.com.douglasmotta.data.response.ConversationResponse
 import br.com.douglasmotta.data.response.MessageResponse
 import br.com.douglasmotta.data.model.ChatConnection
 import br.com.douglasmotta.data.response.OnlineStatusResponse
+import br.com.douglasmotta.data.response.UnreadStatusResponse
 import io.ktor.serialization.*
 import io.ktor.server.websocket.*
 import io.ktor.websocket.*
@@ -88,8 +89,26 @@ class ChatController(
                 }
             }
 
-            sendConversations(messageRequest.receiverId)
+            // sendConversations(messageRequest.receiverId)
+            sendUnreadStatus(messageRequest.receiverId, senderId)
         } ?: throw Exception("Conversation does not exist")
+    }
+
+    private suspend fun sendUnreadStatus(userId: Int, otherId: Int) {
+        connections.firstOrNull { it.userId == userId }?.let { connection ->
+            val unreadMessagesCount = messageLocalDataSource.getUnreadCount(
+                otherId,
+                userId
+            )
+
+            val unreadStatusJsonText = Json.encodeToString<UnreadStatusResponse>(
+                UnreadStatusResponse(
+                    hasConversationsUnread = unreadMessagesCount > 0,
+                    unreadMessagesCount = unreadMessagesCount,
+                )
+            )
+            connection.session.send(Frame.Text("unreadStatus#$unreadStatusJsonText"))
+        }
     }
 
     suspend fun sendConversations(userId: Int) {
@@ -123,7 +142,7 @@ class ChatController(
         val onlineUserIds = connections.map { it.userId }
         val onlineUserIdsJsonText = Json.encodeToString<OnlineStatusResponse>(OnlineStatusResponse(onlineUserIds))
         connections.forEach {
-            it.session.send(Frame.Text("onlineUserIds#$onlineUserIdsJsonText"))
+            it.session.send(Frame.Text("activeUserIds#$onlineUserIdsJsonText"))
         }
     }
 

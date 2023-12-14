@@ -26,6 +26,8 @@ class MessageController(
 
         val totalMessagesCount = messageLocalDataSource.getTotalMessagesCount()
 
+        messageLocalDataSource.markMessagesAsRead(senderId, receiverId)
+
         return MessagesPaginatedResponse(
             messages = messages,
             total = totalMessagesCount,

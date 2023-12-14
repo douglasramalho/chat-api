@@ -4,7 +4,6 @@ import br.com.douglasmotta.data.db.DbHelper
 import br.com.douglasmotta.data.db.conversations
 import br.com.douglasmotta.data.db.table.ConversationEntity
 import br.com.douglasmotta.data.db.table.Conversations
-import br.com.douglasmotta.data.db.table.Messages
 import org.ktorm.dsl.*
 import org.ktorm.entity.add
 import org.ktorm.entity.find

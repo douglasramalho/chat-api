@@ -16,9 +16,6 @@ fun Route.conversation(conversationController: ConversationController) {
         get("/conversations", {
             description = "Get all conversations of a user"
             request {
-                pathParameter<String>("userId") {
-                    description = "The id of the user"
-                }
                 queryParameter<String>("offset") {
                     description = "Offset"
                     required = false

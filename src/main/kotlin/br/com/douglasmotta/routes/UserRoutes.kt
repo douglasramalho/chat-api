@@ -30,7 +30,7 @@ fun Route.users(userController: UserController) {
                     call.respond(HttpStatusCode.Unauthorized)
                     return@get
                 }
-                val users = userController.getUsers().filter { it.id != userId?.toInt() }
+                val users = userController.getUsers().filter { it.id != userId.toInt() }
 
                 if (users.isEmpty()) {
                     call.respond(HttpStatusCode.NotFound, "No users found")

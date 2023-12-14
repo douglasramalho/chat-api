@@ -7,6 +7,6 @@ data class ConversationResponse(
     val id: Int,
     val members: List<UserResponse>,
     val unreadCount: Int,
+    val timestamp: Long,
     val lastMessage: String? = null,
-    val timestamp: Long
 )

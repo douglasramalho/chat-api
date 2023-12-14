@@ -5,7 +5,6 @@ import br.com.douglasmotta.data.model.MemberAlreadyExistsException
 import br.com.douglasmotta.data.model.SocketAction
 import br.com.douglasmotta.data.request.MessageRequest
 import io.ktor.http.*
-import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.websocket.*
@@ -68,7 +67,7 @@ private fun extractAction(message: String): SocketAction? {
             SocketAction.MarkMessageAsRead(body)
         }
 
-        "getOnlineStatus" -> {
+        "getActiveStatus" -> {
             SocketAction.GetOnlineStatus
         }
 

@@ -20,22 +20,29 @@ class ConversationController(
             userId = userId,
             offset = offset,
             limit = limit,
-        ).map {
-            val firstId = it.firstMember.id
-            val secondId = it.secondMember.id
+        ).map { conversationEntity ->
+            val lastMessage = messageLocalDataSource.findLastMessageBy(
+                conversationEntity.firstMember.id,
+                conversationEntity.secondMember.id,
+            )
 
-            val lastMessage = messageLocalDataSource.findLastMessageBy(firstId, secondId)
-            val unreadCount = messageLocalDataSource.getUnreadCount(firstId, secondId)
+            val users = listOf(conversationEntity.firstMember.id, conversationEntity.secondMember.id)
 
-            it.toResponse(lastMessage = lastMessage?.text, unreadCount = unreadCount)
+            val otherId = users.first { it != userId }
+            val unreadCount = messageLocalDataSource.getUnreadCount(
+                otherId,
+                userId
+            )
+
+            conversationEntity.toResponse(lastMessage?.text, unreadCount)
         }
 
-        val totalMessagesCount = conversationLocalDataSource.getTotalConversationsCount()
+        val totalConversationsCount = conversationLocalDataSource.getTotalConversationsCount()
 
         return ConversationsPaginatedResponse(
             conversations = conversations,
-            total = totalMessagesCount,
-            hasMore = offset + limit < totalMessagesCount
+            total = totalConversationsCount,
+            hasMore = offset + limit < totalConversationsCount
         )
     }
 

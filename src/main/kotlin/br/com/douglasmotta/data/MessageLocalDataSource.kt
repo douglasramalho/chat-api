@@ -22,5 +22,7 @@ interface MessageLocalDataSource {
 
     suspend fun markMessageAsRead(messageId: Int)
 
+    suspend fun markMessagesAsRead(senderId: Int, receiverId: Int)
+
     suspend fun insertMessage(entity: MessageEntity): Int
 }

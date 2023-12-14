@@ -1,6 +1,5 @@
 package br.com.douglasmotta.data.db.table
 
-import br.com.douglasmotta.data.model.Conversation
 import br.com.douglasmotta.data.response.ConversationResponse
 import org.ktorm.entity.Entity
 import org.ktorm.schema.Table
@@ -23,14 +22,6 @@ object Conversations: Table<ConversationEntity>("conversations") {
     val secondMemberId = int("second_member_id").references(Users) { it.secondMember }
     val timestamp = timestamp("timestamp").bindTo { it.timestamp }
 }
-
-fun ConversationEntity.toModel(lastMessage: String?) = Conversation(
-    id = this.id,
-    firstMember = this.firstMember.toModel(),
-    secondMember = this.secondMember.toModel(),
-    timestamp = this.timestamp,
-    lastMessage = lastMessage
-)
 
 fun ConversationEntity.toResponse(lastMessage: String?, unreadCount: Int) = ConversationResponse(
     id = this.id,

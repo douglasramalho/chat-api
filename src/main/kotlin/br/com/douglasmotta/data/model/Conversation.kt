@@ -7,5 +7,6 @@ data class Conversation(
     val firstMember: User,
     val secondMember: User,
     val timestamp: Instant,
+    val isUnread: Boolean,
     val lastMessage: String? = null
 )

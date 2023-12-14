@@ -7,10 +7,8 @@ import br.com.douglasmotta.data.db.table.Messages
 import br.com.douglasmotta.data.db.table.toModel
 import br.com.douglasmotta.data.model.Message
 import org.ktorm.dsl.*
-import org.ktorm.entity.add
-import org.ktorm.entity.count
-import org.ktorm.entity.find
-import org.ktorm.entity.findLast
+import org.ktorm.dsl.map
+import org.ktorm.entity.*
 
 class MessageDbDataSourceImpl : MessageLocalDataSource {
 
@@ -27,7 +25,7 @@ class MessageDbDataSourceImpl : MessageLocalDataSource {
             .from(Messages)
             .joinReferencesAndSelect()
             .limit(offset = offset, limit = limit)
-            .orderBy(Messages.timestamp.asc())
+            .orderBy(Messages.timestamp.desc())
             .map { row ->
                 Messages.createEntity(row)
             }
@@ -55,6 +53,15 @@ class MessageDbDataSourceImpl : MessageLocalDataSource {
         val entity = database.messages.find { it.id eq messageId } ?: return
         entity.isUnread = false
         entity.flushChanges()
+    }
+
+    override suspend fun markMessagesAsRead(senderId: Int, receiverId: Int) {
+        val entities = database.messages.filter {
+            ((it.senderId eq senderId and (it.receiverId eq receiverId)) or(it.senderId eq receiverId and (it.receiverId eq senderId))) and (it.isUnread eq true) }
+        entities.forEach {
+            it.isUnread = false
+            it.flushChanges()
+        }
     }
 
     override suspend fun insertMessage(entity: MessageEntity): Int {

@@ -32,6 +32,7 @@ fun ConversationEntity.toResponse(lastMessage: String?, unreadCount: Int) = Conv
         this.secondMember.toResponse(),
     ),
     unreadCount = unreadCount,
+    createdAt = this.createdAt.toEpochMilli(),
     updatedAt = this.updatedAt.toEpochMilli(),
     lastMessage = lastMessage
 )

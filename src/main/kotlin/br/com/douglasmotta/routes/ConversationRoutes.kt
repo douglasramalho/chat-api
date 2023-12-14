@@ -41,12 +41,16 @@ fun Route.conversation(conversationController: ConversationController) {
                 val offset = call.request.queryParameters["offset"]?.toIntOrNull() ?: 0
                 val limit = call.request.queryParameters["limit"]?.toIntOrNull() ?: 10
 
-                val conversations = conversationController.getConversationsBy(
-                    userId = userId.toInt(),
-                    offset = offset,
-                    limit = limit,
-                )
-                call.respond(conversations)
+                try {
+                    val conversations = conversationController.getConversationsBy(
+                        userId = userId.toInt(),
+                        offset = offset,
+                        limit = limit,
+                    )
+                    call.respond(conversations)
+                } catch (t: Throwable) {
+                    call.respond(HttpStatusCode.InternalServerError.copy(description = t.localizedMessage))
+                }
             } ?: call.respond(HttpStatusCode.Unauthorized)
         }
 

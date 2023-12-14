@@ -15,5 +15,7 @@ interface ConversationLocalDataSource {
 
     suspend fun insertConversation(entity: ConversationEntity): Boolean
 
+    suspend fun updateConversation(entity: ConversationEntity): Boolean
+
     suspend fun getTotalConversationsCount(): Int
 }

@@ -12,7 +12,8 @@ interface ConversationEntity : Entity<ConversationEntity> {
     val id: Int
     var firstMember: UserEntity
     var secondMember: UserEntity
-    var timestamp: Instant
+    var createdAt: Instant
+    var updatedAt: Instant
 }
 
 object Conversations: Table<ConversationEntity>("conversations") {
@@ -20,7 +21,8 @@ object Conversations: Table<ConversationEntity>("conversations") {
     val id = int("id").primaryKey().bindTo { it.id }
     val firstMemberId = int("first_member_id").references(Users) { it.firstMember }
     val secondMemberId = int("second_member_id").references(Users) { it.secondMember }
-    val timestamp = timestamp("timestamp").bindTo { it.timestamp }
+    val createdAt = timestamp("created_at").bindTo { it.createdAt }
+    val updatedAt = timestamp("updated_at").bindTo { it.updatedAt }
 }
 
 fun ConversationEntity.toResponse(lastMessage: String?, unreadCount: Int) = ConversationResponse(
@@ -30,6 +32,6 @@ fun ConversationEntity.toResponse(lastMessage: String?, unreadCount: Int) = Conv
         this.secondMember.toResponse(),
     ),
     unreadCount = unreadCount,
-    timestamp = this.timestamp.toEpochMilli(),
+    updatedAt = this.updatedAt.toEpochMilli(),
     lastMessage = lastMessage
 )

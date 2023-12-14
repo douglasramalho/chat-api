@@ -23,10 +23,6 @@ fun Route.chatSocket(chatController: ChatController) {
                         is SocketAction.NewMessage ->
                             chatController.sendMessage(userId.toInt(), action.request)
 
-                        is SocketAction.GetConversations -> {
-                            chatController.sendConversations(action.userId.toInt())
-                        }
-
                         is SocketAction.MarkMessageAsRead -> {
                             chatController.readMessage(action.messageId.toInt())
                         }
@@ -54,10 +50,6 @@ private fun extractAction(message: String): SocketAction? {
     val type = message.substringBefore("#")
     val body = message.substringAfter("#")
     return when (type) {
-        "getConversations" -> {
-            SocketAction.GetConversations(body)
-        }
-
         "newMessage" -> {
             val request = Json.decodeFromString<MessageRequest>(body)
             SocketAction.NewMessage(request)

@@ -8,15 +8,11 @@ import br.com.douglasmotta.data.db.table.MessageEntity
 import br.com.douglasmotta.data.db.table.toResponse
 import br.com.douglasmotta.data.model.MemberAlreadyExistsException
 import br.com.douglasmotta.data.request.MessageRequest
-import br.com.douglasmotta.data.response.ConversationResponse
 import br.com.douglasmotta.data.response.MessageResponse
 import br.com.douglasmotta.data.model.ChatConnection
 import br.com.douglasmotta.data.response.OnlineStatusResponse
 import br.com.douglasmotta.data.response.UnreadStatusResponse
-import io.ktor.serialization.*
-import io.ktor.server.websocket.*
 import io.ktor.websocket.*
-import io.ktor.websocket.serialization.*
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.time.Instant
@@ -51,7 +47,7 @@ class ChatController(
             val newConversation = ConversationEntity {
                 this.firstMember = firstMember
                 this.secondMember = secondMember
-                timestamp = Instant.now()
+                createdAt = Instant.now()
             }
 
             val conversationCreated = conversationLocalDataSource.insertConversation(newConversation)
@@ -69,15 +65,19 @@ class ChatController(
                 it.firstMember
             } else it.secondMember
 
+            val messageTimestamp = Instant.now()
             val messageEntity = MessageEntity {
                 sender = senderMember
                 receiver = receiverMember
                 text = messageRequest.text
-                timestamp = Instant.now()
+                timestamp = messageTimestamp
                 isUnread = true
             }
 
             messageLocalDataSource.insertMessage(messageEntity)
+
+            it.updatedAt = messageTimestamp
+            conversationLocalDataSource.updateConversation(it)
 
             val messageResponse = messageEntity.toResponse()
 
@@ -89,7 +89,6 @@ class ChatController(
                 }
             }
 
-            // sendConversations(messageRequest.receiverId)
             sendUnreadStatus(messageRequest.receiverId, senderId)
         } ?: throw Exception("Conversation does not exist")
     }
@@ -108,29 +107,6 @@ class ChatController(
                 )
             )
             connection.session.send(Frame.Text("unreadStatus#$unreadStatusJsonText"))
-        }
-    }
-
-    suspend fun sendConversations(userId: Int) {
-        connections.firstOrNull { it.userId == userId }?.let { connection ->
-            val conversations = conversationLocalDataSource.findConversationsBy(userId).map { conversationEntity ->
-                val lastMessage = messageLocalDataSource.findLastMessageBy(
-                    conversationEntity.firstMember.id,
-                    conversationEntity.secondMember.id,
-                )
-
-                val users = listOf(conversationEntity.firstMember.id, conversationEntity.secondMember.id)
-
-                val otherId = users.first { it != userId }
-                val unreadCount = messageLocalDataSource.getUnreadCount(
-                    otherId,
-                    userId
-                )
-
-                conversationEntity.toResponse(lastMessage?.text, unreadCount)
-            }
-            val conversationsJsonText = Json.encodeToString<List<ConversationResponse>>(conversations)
-            connection.session.send(Frame.Text("conversationsList#$conversationsJsonText"))
         }
     }
 

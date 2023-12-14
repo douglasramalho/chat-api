@@ -7,6 +7,7 @@ import br.com.douglasmotta.data.db.table.Conversations
 import org.ktorm.dsl.*
 import org.ktorm.entity.add
 import org.ktorm.entity.find
+import org.ktorm.entity.update
 
 class ConversationDbDataSourceImpl : ConversationLocalDataSource {
 
@@ -24,7 +25,7 @@ class ConversationDbDataSourceImpl : ConversationLocalDataSource {
                 Conversations.firstMemberId eq userId or (Conversations.secondMemberId eq userId)
             }
             .limit(offset = offset, limit = limit)
-            .orderBy(Conversations.timestamp.asc())
+            .orderBy(Conversations.updatedAt.asc())
             .map { row ->
                 Conversations.createEntity(row)
             }
@@ -41,6 +42,10 @@ class ConversationDbDataSourceImpl : ConversationLocalDataSource {
 
     override suspend fun insertConversation(entity: ConversationEntity): Boolean {
         return database.conversations.add(entity) > 0
+    }
+
+    override suspend fun updateConversation(entity: ConversationEntity): Boolean {
+        return database.conversations.update(entity) > 0
     }
 
     override suspend fun getTotalConversationsCount(): Int {

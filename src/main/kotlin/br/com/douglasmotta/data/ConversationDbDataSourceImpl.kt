@@ -25,7 +25,7 @@ class ConversationDbDataSourceImpl : ConversationLocalDataSource {
                 Conversations.firstMemberId eq userId or (Conversations.secondMemberId eq userId)
             }
             .limit(offset = offset, limit = limit)
-            .orderBy(Conversations.updatedAt.asc())
+            .orderBy(Conversations.updatedAt.desc())
             .map { row ->
                 Conversations.createEntity(row)
             }

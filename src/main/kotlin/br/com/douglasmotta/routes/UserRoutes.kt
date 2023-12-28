@@ -48,7 +48,7 @@ fun Route.users(userController: UserController) {
             response {
                 HttpStatusCode.OK to {
                     description = "Success"
-                    body<List<UserResponse>>()
+                    body<UserResponse>()
                 }
                 HttpStatusCode.Unauthorized
                 HttpStatusCode.NotFound to {

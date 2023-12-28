@@ -2,6 +2,7 @@ package br.com.douglasmotta.data
 
 import br.com.douglasmotta.data.db.DbHelper
 import br.com.douglasmotta.data.db.messages
+import br.com.douglasmotta.data.db.table.Conversations
 import br.com.douglasmotta.data.db.table.MessageEntity
 import br.com.douglasmotta.data.db.table.Messages
 import br.com.douglasmotta.data.db.table.toModel
@@ -24,6 +25,9 @@ class MessageDbDataSourceImpl : MessageLocalDataSource {
         val result = database
             .from(Messages)
             .joinReferencesAndSelect()
+            .where {
+                (Messages.senderId eq senderId and (Messages.receiverId eq receiverId)) or(Messages.senderId eq receiverId and (Messages.receiverId eq senderId))
+            }
             .limit(offset = offset, limit = limit)
             .orderBy(Messages.timestamp.desc())
             .map { row ->

@@ -1,6 +1,7 @@
 package br.com.douglasmotta.routes
 
 import br.com.douglasmotta.controller.UserController
+import br.com.douglasmotta.data.response.ImageResponse
 import br.com.douglasmotta.data.response.UserResponse
 import br.com.douglasmotta.extension.getCurrentUserId
 import io.github.smiley4.ktorswaggerui.dsl.get
@@ -26,6 +27,7 @@ fun Route.users(userController: UserController) {
         response {
             HttpStatusCode.OK to {
                 description = "Success"
+                body<ImageResponse>()
             }
             HttpStatusCode.BadRequest to {
                 description =

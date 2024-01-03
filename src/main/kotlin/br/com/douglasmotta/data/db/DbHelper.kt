@@ -1,6 +1,7 @@
 package br.com.douglasmotta.data.db
 
 import br.com.douglasmotta.data.db.table.Conversations
+import br.com.douglasmotta.data.db.table.Images
 import br.com.douglasmotta.data.db.table.Messages
 import br.com.douglasmotta.data.db.table.Users
 import io.ktor.server.application.*
@@ -29,3 +30,4 @@ object DbHelper {
 val Database.users get() = this.sequenceOf(Users)
 val Database.messages get() = this.sequenceOf(Messages)
 val Database.conversations get() = this.sequenceOf(Conversations)
+val Database.images get() = this.sequenceOf(Images)

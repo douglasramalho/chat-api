@@ -8,5 +8,5 @@ data class CreateUserRequest(
     val password: String,
     val firstName: String,
     val lastName: String,
-    val profilePictureUrl: String? = null,
+    val profilePictureId: Int? = null,
 )

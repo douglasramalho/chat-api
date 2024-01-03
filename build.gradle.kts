@@ -57,6 +57,11 @@ dependencies {
 
     implementation("io.ktor:ktor-server-swagger:$ktor_version")
 
+    implementation("com.google.firebase:firebase-admin:9.2.0")
+
+    implementation("io.ktor:ktor-server-call-logging:$ktor_version")
+    implementation("ch.qos.logback:logback-classic:1.4.12")
+
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
 }

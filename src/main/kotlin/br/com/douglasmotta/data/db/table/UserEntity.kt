@@ -15,7 +15,7 @@ interface UserEntity : Entity<UserEntity> {
     var salt: String
     var firstName: String
     var lastName: String
-    var profilePictureUrl: String?
+    var profileImage: ImageEntity?
 }
 
 object Users: Table<UserEntity>("users") {
@@ -25,7 +25,7 @@ object Users: Table<UserEntity>("users") {
     val salt = varchar("salt").bindTo { it.salt }
     val firstName = varchar("first_name").bindTo { it.firstName }
     val lastName = varchar("last_name").bindTo { it.lastName }
-    val profilePictureUrl = varchar("profile_picture_url").bindTo { it.profilePictureUrl }
+    val profileImageId = int("profile_image_id").references(Images) { it.profileImage }
 }
 
 fun UserEntity.toModel() = User(
@@ -35,7 +35,7 @@ fun UserEntity.toModel() = User(
     salt = this.salt,
     firstName = this.firstName,
     lastName = this.lastName,
-    profilePictureUrl = this.profilePictureUrl
+    profilePictureUrl = this.profileImage?.url
 )
 
 fun UserEntity.toResponse() = UserResponse(
@@ -43,5 +43,5 @@ fun UserEntity.toResponse() = UserResponse(
     username = this.username,
     firstName = this.firstName,
     lastName = this.lastName,
-    profilePictureUrl = this.profilePictureUrl,
+    profilePictureUrl = this.profileImage?.url,
 )

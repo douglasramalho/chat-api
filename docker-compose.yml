@@ -21,6 +21,9 @@ services:
     ports:
       - "8080:8080"
     restart: always
+    volumes:
+      - ./serviceAccountKey.json:/env/serviceAccountKey.json:ro
+      - ./uploads:/uploads
     networks:
       - backend
     depends_on:

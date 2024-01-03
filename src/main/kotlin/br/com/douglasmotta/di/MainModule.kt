@@ -2,6 +2,7 @@ package br.com.douglasmotta.di
 
 import br.com.douglasmotta.controller.*
 import br.com.douglasmotta.data.*
+import br.com.douglasmotta.firebase.FirebaseInitialization
 import br.com.douglasmotta.security.hashing.HashingService
 import br.com.douglasmotta.security.hashing.SHA256HashingService
 import br.com.douglasmotta.security.token.JwtTokenService
@@ -29,12 +30,20 @@ val mainModule = module {
         ConversationDbDataSourceImpl()
     }
 
-    single {
-        AuthController(get())
+    single<ImageLocalDataSource> {
+        ImageDbDataSourceImpl()
+    }
+
+    single<MediaStorageDataSource> {
+        FirebaseMediaStorageDataSourceImpl(get())
     }
 
     single {
-        UserController(get())
+        AuthController(get(), get())
+    }
+
+    single {
+        UserController(get(), get(), get())
     }
 
     single {
@@ -47,5 +56,9 @@ val mainModule = module {
 
     single {
         MessageController(get())
+    }
+
+    single {
+        FirebaseInitialization()
     }
 }
